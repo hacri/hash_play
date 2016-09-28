@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>谁蠢</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/echarts/dist/echarts.common.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <h3>测试机智还是蠢</h3>
+    <form class="">
+        <input type="text" id="name">
+        <button>测试</button>
+    </form>
+    <div id="main" style="width: 100%;height:400px;"></div>
+</div>
+<script>
+    var color = {
+        蠢: '#c23531',
+        机智: '#2f4554'
+    };
+    var draw = function (name, values) {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        var data = [];
+
+        $.map(values, function (item, key) {
+            if (item <= 0) {
+                return;
+            }
+            data.push({
+                name: key + ' ' + item + '%',
+                value: item,
+                itemStyle: {
+                    normal: {
+                        color: color[key]
+                    }
+                }
+            });
+        });
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: name + ' 机智还是蠢？',
+                x: 'center'
+            },
+            series: [
+                {
+                    name: '',
+                    type: 'pie',
+                    radius: '80%',
+                    center: ['50%', '60%'],
+                    data: data,
+                    label: {
+                        normal: {
+                            textStyle: {
+                                fontSize: 20
+                            }
+                        }
+                    },
+                    hoverAnimation: false,
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    };
+
+    $('form').submit(function () {
+        var name = $('#name').val();
+        if (!name) {
+            return false;
+        }
+
+        $.getJSON('hash.php', {name: name}, function (data) {
+            draw(name, data);
+        });
+
+        return false;
+    });
+
+</script>
+</body>
+</html>
